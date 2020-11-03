@@ -130,7 +130,7 @@ export class CommonNetworkMember {
       throw new Error('`password` and `encryptedSeed` must be provided!')
     }
 
-    this._sdkOptions = CommonNetworkMember.setEnvironmentVarialbles(options)
+    this._sdkOptions = CommonNetworkMember.setEnvironmentVariables(options)
 
     const {
       issuerUrl,
@@ -187,7 +187,7 @@ export class CommonNetworkMember {
     return accessApiKey
   }
 
-  protected static setEnvironmentVarialbles(options: SdkOptions) {
+  protected static setEnvironmentVariables(options: SdkOptions) {
     const env = options.env || 'staging'
 
     let vaultUrl
@@ -376,7 +376,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    // const { registryUrl } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    // const { registryUrl } = CommonNetworkMember.setEnvironmentVariables(options)
     /* istanbul ignore next: seems options is {} if not passed to the method */
     options = options || {}
 
@@ -406,7 +406,7 @@ export class CommonNetworkMember {
     nonce: number,
     options: SdkOptions = {},
   ) {
-    const { registryUrl } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { registryUrl } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const accessApiKey = CommonNetworkMember._setAccessApiKey(options)
 
@@ -597,7 +597,7 @@ export class CommonNetworkMember {
       { isArray: false, type: MessageParameters, isRequired: false, value: messageParameters },
     ])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const cognitoService = new CognitoService({ userPoolId, clientId })
     const token = await cognitoService.signInWithUsername(username, messageParameters)
@@ -620,7 +620,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { keyStorageUrl, userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { keyStorageUrl, userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     /* istanbul ignore next: seems options is {} if not passed to the method */
     options = options || {}
@@ -661,7 +661,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { keyStorageUrl, registryUrl } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { keyStorageUrl, registryUrl } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const credentialOfferToken = await WalletStorageService.getCredentialOffer(idToken, keyStorageUrl, options)
 
@@ -678,7 +678,7 @@ export class CommonNetworkMember {
   async signOut(options: SdkOptions = {}): Promise<void> {
     await ParametersValidator.validate([{ isArray: false, type: SdkOptions, isRequired: false, value: options }])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
     const cognitoService = new CognitoService({ userPoolId, clientId })
 
     if (this.cognitoUserTokens) {
@@ -694,7 +694,7 @@ export class CommonNetworkMember {
 
   /* istanbul ignore next: private method */
   private async _refreshCognitoUserTokens(options: SdkOptions = {}): Promise<void> {
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const cognitoService = new CognitoService({ userPoolId, clientId })
 
@@ -722,7 +722,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const cognitoService = new CognitoService({ userPoolId, clientId })
 
@@ -749,7 +749,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const cognitoService = new CognitoService({ userPoolId, clientId })
 
@@ -770,7 +770,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { keyStorageUrl, userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { keyStorageUrl, userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const cognitoService = new CognitoService({ userPoolId, clientId })
 
@@ -864,7 +864,7 @@ export class CommonNetworkMember {
 
     password = normalizeShortPassword(password, username)
 
-    const { keyStorageUrl, userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { keyStorageUrl, userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const apiKey = CommonNetworkMember._setAccessApiKey(options)
 
@@ -949,7 +949,7 @@ export class CommonNetworkMember {
 
     const { isUsername } = validateUsername(username)
 
-    const { userPoolId, clientId, keyStorageUrl } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId, keyStorageUrl } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const apiKey = CommonNetworkMember._setAccessApiKey(options)
 
@@ -1076,7 +1076,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const cognitoService = new CognitoService({ userPoolId, clientId })
 
@@ -1159,7 +1159,7 @@ export class CommonNetworkMember {
       return this.cognitoUserTokens
     }
 
-    const { userPoolId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     this.cognitoUserTokens = readUserTokensFromSessionStorage(userPoolId)
 
@@ -1179,7 +1179,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const { accessToken } = await this._getCognitoUserTokensForUser()
 
@@ -1200,7 +1200,7 @@ export class CommonNetworkMember {
       { isArray: false, type: SdkOptions, isRequired: false, value: options },
     ])
 
-    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVarialbles(options)
+    const { userPoolId, clientId } = CommonNetworkMember.setEnvironmentVariables(options)
 
     const { accessToken } = await this._getCognitoUserTokensForUser()
 
