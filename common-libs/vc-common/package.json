@@ -33,7 +33,7 @@
     "did-resolver": "^3.1.0",
     "jsonld-signatures": "^7.0.0",
     "tiny-warning": "^1.0.3",
-    "tslib": "^2.0.1"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@affinidi/eslint-config": "1.0.1",
