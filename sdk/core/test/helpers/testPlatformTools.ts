@@ -2,13 +2,17 @@ import { IPlatformEncryptionTools } from '../../src/shared/interfaces'
 
 export const testPlatformTools: IPlatformEncryptionTools = {
   platformName: 'stub',
-  decryptByPrivateKey: async () => {
-    throw new Error('not implemented')
+  // eslint-disable-next-line no-unused-vars
+  decryptByPrivateKey: async (privateKeyBuffer: Buffer, data: string) => {
+    return JSON.parse(data)
   },
-  encryptByPublicKey: async () => {
-    throw new Error('not implemented')
+  // eslint-disable-next-line no-unused-vars
+  encryptByPublicKey: async (publicKeyBuffer: Buffer, data: unknown) => {
+    const dataString = JSON.stringify(data)
+    return dataString
   },
-  computePersonalHash: async () => {
-    throw new Error('not implemented')
+  // eslint-disable-next-line no-unused-vars
+  computePersonalHash: async (privateKeyBuffer: Buffer, data: string) => {
+    return data
   },
 }

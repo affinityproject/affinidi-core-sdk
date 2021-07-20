@@ -17,6 +17,7 @@ import {
   getBasicOptionsForEnvironment,
   testSecrets,
 } from '../helpers'
+import credential from '../factory/signedCredential'
 
 const {
   PASSWORD,
@@ -1046,5 +1047,46 @@ describe('CommonNetworkMember', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(signedCredentials[0].credentialSubject.data.email).to.eq(decoded.email)
+  })
+
+  it('#saveCredentials', async () => {
+    const credentials = [credential]
+    const commonNetworkMember = new CommonNetworkMember(password, encryptedSeedElem, options)
+
+    const result = await commonNetworkMember.saveCredentials(credentials)
+
+    expect(result[0].credentialId).to.eql(credential.id)
+  })
+
+  it('#getCredentialById', async () => {
+    const commonNetworkMember = new CommonNetworkMember(password, encryptedSeedElem, options)
+
+    const result = await commonNetworkMember.getCredentialById(credential.id)
+
+    const parsedCredential = JSON.parse(result)
+    expect(parsedCredential.id).to.eql(credential.id)
+  })
+
+  it('#getAllCredentials', async () => {
+    const commonNetworkMember = new CommonNetworkMember(password, encryptedSeedElem, options)
+
+    const result = await commonNetworkMember.getAllCredentials([])
+
+    const parsedCredential = JSON.parse(result[0])
+    expect(parsedCredential.id).to.eql(credential.id)
+  })
+
+  it('#getAllCredentials by types', async () => {
+    const commonNetworkMember = new CommonNetworkMember(password, encryptedSeedElem, options)
+
+    const result = await commonNetworkMember.getAllCredentials([credential.type])
+
+    const parsedCredential = JSON.parse(result[0])
+    expect(parsedCredential.id).to.eql(credential.id)
+  })
+
+  it('#deleteCredentialById', async () => {
+    const commonNetworkMember = new CommonNetworkMember(password, encryptedSeedElem, options)
+    await commonNetworkMember.deleteCredentialById(credential.id)
   })
 })

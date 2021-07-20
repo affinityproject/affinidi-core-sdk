@@ -3,7 +3,7 @@ import sinon from 'sinon'
 
 import * as ethereumjsUtils from 'ethereumjs-util'
 import { KeysService } from '@affinidi/common'
-import { STAGING_VAULT_URL, DEFAULT_DID_METHOD } from '../../src/_defaultConfig'
+import { STAGING_AFFINIDI_VAULT_URL, DEFAULT_DID_METHOD } from '../../src/_defaultConfig'
 import bip32fromSeedResponse from '../factory/bip32fromSeedResponse'
 
 const bip32 = require('bip32')
@@ -32,7 +32,7 @@ export const authorizeVault = async () => {
 
   const requestTokenPath = '/auth/request-token'
 
-  nock(STAGING_VAULT_URL)
+  nock(STAGING_AFFINIDI_VAULT_URL)
     .filteringPath(() => requestTokenPath)
     .post(requestTokenPath)
     .reply(200, { token })
@@ -42,7 +42,7 @@ export const authorizeVault = async () => {
 
   const validateTokenPath = '/auth/validate-token'
 
-  nock(STAGING_VAULT_URL)
+  nock(STAGING_AFFINIDI_VAULT_URL)
     .filteringPath(() => validateTokenPath)
     .post(validateTokenPath)
     .reply(200, {})
@@ -55,12 +55,12 @@ export const authorizeVaultEndpoints = async () => {
   const requestTokenPath = '/auth/request-token'
   const validateTokenPath = '/auth/validate-token'
 
-  nock(STAGING_VAULT_URL)
+  nock(STAGING_AFFINIDI_VAULT_URL)
     .filteringPath(() => requestTokenPath)
     .post(requestTokenPath)
     .reply(200, { token })
 
-  nock(STAGING_VAULT_URL)
+  nock(STAGING_AFFINIDI_VAULT_URL)
     .filteringPath(() => validateTokenPath)
     .post(validateTokenPath)
     .reply(200, {})

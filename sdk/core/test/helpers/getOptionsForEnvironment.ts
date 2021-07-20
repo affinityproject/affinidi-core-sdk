@@ -1,9 +1,12 @@
 import { Env } from '../../src/dto/shared.dto'
 import {
-  DEV_VAULT_URL,
-  PROD_VAULT_URL,
+  DEV_AFFINIDI_VAULT_URL,
+  PROD_AFFINIDI_VAULT_URL,
+  DEV_BLOOM_VAULT_URL,
+  PROD_BLOOM_VAULT_URL,
   DEV_REGISTRY_URL,
-  STAGING_VAULT_URL,
+  STAGING_AFFINIDI_VAULT_URL,
+  STAGING_BLOOM_VAULT_URL,
   PROD_REGISTRY_URL,
   DEV_REVOCATION_URL,
   PROD_REVOCATION_URL,
@@ -37,7 +40,8 @@ export const getAllOptionsForEnvironment = () => {
       return {
         env,
         clientId: DEV_COGNITO_CLIENT_ID,
-        vaultUrl: DEV_VAULT_URL,
+        bloomVaultUrl: DEV_BLOOM_VAULT_URL,
+        affinidiVaultUrl: DEV_AFFINIDI_VAULT_URL,
         userPoolId: DEV_COGNITO_USER_POOL_ID,
         registryUrl: DEV_REGISTRY_URL,
         accessApiKey: DEV_API_KEY_HASH,
@@ -49,7 +53,8 @@ export const getAllOptionsForEnvironment = () => {
       return {
         env,
         clientId: PROD_COGNITO_CLIENT_ID,
-        vaultUrl: PROD_VAULT_URL,
+        bloomVaultUrl: PROD_BLOOM_VAULT_URL,
+        affinidiVaultUrl: PROD_AFFINIDI_VAULT_URL,
         userPoolId: PROD_COGNITO_USER_POOL_ID,
         registryUrl: PROD_REGISTRY_URL,
         accessApiKey: PROD_API_KEY_HASH,
@@ -60,7 +65,8 @@ export const getAllOptionsForEnvironment = () => {
     case 'staging':
       return {
         env,
-        vaultUrl: STAGING_VAULT_URL,
+        bloomVaultUrl: STAGING_BLOOM_VAULT_URL,
+        affinidiVaultUrl: STAGING_AFFINIDI_VAULT_URL,
         clientId: STAGING_COGNITO_CLIENT_ID,
         userPoolId: STAGING_COGNITO_USER_POOL_ID,
         registryUrl: STAGING_REGISTRY_URL,

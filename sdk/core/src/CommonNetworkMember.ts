@@ -7,6 +7,7 @@ import {
 } from '@affinidi/internal-api-clients'
 import { buildVCV1Unsigned, buildVCV1Skeleton, buildVPV1Unsigned } from '@affinidi/vc-common'
 import { VCV1, VCV1SubjectBaseMA, VPV1, VCV1Unsigned } from '@affinidi/vc-common'
+import { DidAuthService } from '@affinidi/affinidi-did-auth-lib'
 import { parse } from 'did-resolver'
 
 import { EventComponent, EventCategory, EventName, EventMetadata } from '@affinidi/affinity-metrics-lib'
@@ -157,7 +158,8 @@ export abstract class CommonNetworkMember<TOptions extends SdkOptions = SdkOptio
       metricsUrl,
       registryUrl,
       verifierUrl,
-      vaultUrl,
+      bloomVaultUrl,
+      affinidiVaultUrl,
       phoneIssuerBasePath,
       emailIssuerBasePath,
       clientId,
@@ -176,14 +178,17 @@ export abstract class CommonNetworkMember<TOptions extends SdkOptions = SdkOptio
     this._revocationApiService = new RevocationApiService({ revocationUrl, accessApiKey })
     this._userManagementService = new UserManagementService({ clientId, userPoolId, keyStorageUrl, accessApiKey })
     this._keyManagementService = new KeyManagementService({ keyStorageUrl, accessApiKey })
-    this._walletStorageService = new WalletStorageService(keysService, platformEncryptionTools, {
-      vaultUrl,
+    this._didDocumentService = new DidDocumentService(keysService)
+    const didAuthService = new DidAuthService({ encryptedSeed, encryptionKey: password })
+    this._walletStorageService = new WalletStorageService(didAuthService, keysService, platformEncryptionTools, {
+      bloomVaultUrl,
+      affinidiVaultUrl,
       accessApiKey,
       storageRegion,
+      audienceDid: this.did,
     })
     this._jwtService = new JwtService()
     this._holderService = new HolderService({ registryUrl, metricsUrl, accessApiKey }, component)
-    this._didDocumentService = new DidDocumentService(keysService)
     this._affinity = new Affinity({
       apiKey: accessApiKey,
       registryUrl: registryUrl,
@@ -1095,17 +1100,10 @@ export abstract class CommonNetworkMember<TOptions extends SdkOptions = SdkOptio
 
   /**
    * @description Deletes all credentials from the wallet
+   * @param storageRegion (string) - (optional) specify region where credentials will be stored
    */
-  async deleteAllCredentials(): Promise<void> {
-    return this._walletStorageService.deleteAllCredentials()
-  }
-
-  /**
-   * @description Deletes credential by index
-   */
-  /* istanbul ignore next: protected method */
-  protected async deleteCredentialByIndex(index: number): Promise<void> {
-    return this._walletStorageService.deleteCredentialByIndex(index)
+  async deleteAllCredentials(storageRegion?: string): Promise<void> {
+    return this._walletStorageService.deleteAllCredentials(storageRegion)
   }
 
   /**
@@ -1978,11 +1976,11 @@ export abstract class CommonNetworkMember<TOptions extends SdkOptions = SdkOptio
    * 1. encrypt VCs
    * 2. store encrypted VCs in Affinity Guardian Wallet
    * @param data - array of VCs
-   * @param storageRegion - (optional) specify AWS region where credentials will be stored
+   * @param storageRegion (string) - (optional) specify region where credentials will be stored
    * @returns array of ids for corelated records
    */
   async saveCredentials(data: any[], storageRegion?: string): Promise<any> {
-    const result = await this._walletStorageService.encryptAndSaveCredentials(data, storageRegion)
+    const result = await this._walletStorageService.saveCredentials(data, storageRegion)
 
     this._sendVCSavedMetrics(data)
     // NOTE: what if creds actually were not saved in the vault?
@@ -1992,20 +1990,30 @@ export abstract class CommonNetworkMember<TOptions extends SdkOptions = SdkOptio
   }
 
   /**
-   * @description Retrieve only the credential at given index
-   * @param credentialIndex - index for the VC in vault
+   * @description Retrieve only the credential
+   * @param credentialId (string) - id for the VC in vault
+   * @param storageRegion (string) - (optional) specify region where credentials will be stored
    * @returns a single VC
    */
-  async getCredentialByIndex(credentialIndex: number): Promise<any> {
-    return this._walletStorageService.getCredentialByIndex(credentialIndex)
+  async getCredentialById(credentialId: string, storageRegion?: string): Promise<any> {
+    return this._walletStorageService.getCredentialById(credentialId, storageRegion)
   }
 
   /**
-   * @description Delete credential by id if found in given range
-   * @param id - id of the credential
-   * @param credentialIndex - credential to remove
+   * @description Retrieve only the credential
+   * @param storageRegion (string) - (optional) specify region where credentials will be stored
+   * @returns a single VC
    */
-  async deleteCredential(id?: string, credentialIndex?: number): Promise<void> {
-    return this._walletStorageService.deleteCredential(id, credentialIndex)
+  async getAllCredentials(types: string[][], storageRegion?: string): Promise<any> {
+    return this._walletStorageService.getAllCredentials(types, storageRegion)
+  }
+
+  /**
+   * @description Delete credential by id
+   * @param credentialId (string) - credential to remove
+   * @param storageRegion (string) - (optional) specify region where credentials will be stored
+   */
+  async deleteCredentialById(credentialId: string, storageRegion?: string): Promise<void> {
+    return this._walletStorageService.deleteCredentialById(credentialId, storageRegion)
   }
 }

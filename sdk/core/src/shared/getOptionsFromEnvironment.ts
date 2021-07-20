@@ -11,7 +11,8 @@ import {
   DEV_ISSUER_URL,
   DEV_VERIFIER_URL,
   DEV_KEY_STORAGE_URL,
-  DEV_VAULT_URL,
+  DEV_BLOOM_VAULT_URL,
+  DEV_AFFINIDI_VAULT_URL,
   DEV_PHONE_ISSUER_BASE_PATH,
   DEV_EMAIL_ISSUER_BASE_PATH,
   STAGING_COGNITO_CLIENT_ID,
@@ -20,7 +21,8 @@ import {
   STAGING_ISSUER_URL,
   STAGING_VERIFIER_URL,
   STAGING_KEY_STORAGE_URL,
-  STAGING_VAULT_URL,
+  STAGING_BLOOM_VAULT_URL,
+  STAGING_AFFINIDI_VAULT_URL,
   STAGING_PHONE_ISSUER_BASE_PATH,
   STAGING_EMAIL_ISSUER_BASE_PATH,
   PROD_COGNITO_CLIENT_ID,
@@ -29,7 +31,8 @@ import {
   PROD_ISSUER_URL,
   PROD_VERIFIER_URL,
   PROD_KEY_STORAGE_URL,
-  PROD_VAULT_URL,
+  PROD_BLOOM_VAULT_URL,
+  PROD_AFFINIDI_VAULT_URL,
   PROD_PHONE_ISSUER_BASE_PATH,
   PROD_EMAIL_ISSUER_BASE_PATH,
   DEV_METRICS_URL,
@@ -60,7 +63,8 @@ type EnvironmentOptions = {
   issuerUrl?: string
   registryUrl?: string
   verifierUrl?: string
-  vaultUrl?: string
+  bloomVaultUrl?: string
+  affinidiVaultUrl?: string
   keyStorageUrl?: string
   phoneIssuerBasePath?: string
   emailIssuerBasePath?: string
@@ -78,7 +82,8 @@ function getBasicOptionsFromEnvironment(options: EnvironmentOptions) {
         issuerUrl: options.issuerUrl || DEV_ISSUER_URL,
         registryUrl: options.registryUrl || DEV_REGISTRY_URL,
         verifierUrl: options.verifierUrl || DEV_VERIFIER_URL,
-        vaultUrl: options.vaultUrl || DEV_VAULT_URL,
+        bloomVaultUrl: options.bloomVaultUrl || DEV_BLOOM_VAULT_URL,
+        affinidiVaultUrl: options.affinidiVaultUrl || DEV_AFFINIDI_VAULT_URL,
         keyStorageUrl: options.keyStorageUrl || DEV_KEY_STORAGE_URL,
         clientId: DEV_COGNITO_CLIENT_ID,
         userPoolId: DEV_COGNITO_USER_POOL_ID,
@@ -95,7 +100,8 @@ function getBasicOptionsFromEnvironment(options: EnvironmentOptions) {
         issuerUrl: options.issuerUrl || PROD_ISSUER_URL,
         registryUrl: options.registryUrl || PROD_REGISTRY_URL,
         verifierUrl: options.verifierUrl || PROD_VERIFIER_URL,
-        vaultUrl: options.vaultUrl || PROD_VAULT_URL,
+        bloomVaultUrl: options.bloomVaultUrl || PROD_BLOOM_VAULT_URL,
+        affinidiVaultUrl: options.affinidiVaultUrl || PROD_AFFINIDI_VAULT_URL,
         keyStorageUrl: options.keyStorageUrl || PROD_KEY_STORAGE_URL,
         clientId: PROD_COGNITO_CLIENT_ID,
         userPoolId: PROD_COGNITO_USER_POOL_ID,
@@ -111,7 +117,8 @@ function getBasicOptionsFromEnvironment(options: EnvironmentOptions) {
         issuerUrl: options.issuerUrl || STAGING_ISSUER_URL,
         registryUrl: options.registryUrl || STAGING_REGISTRY_URL,
         verifierUrl: options.verifierUrl || STAGING_VERIFIER_URL,
-        vaultUrl: options.vaultUrl || STAGING_VAULT_URL,
+        bloomVaultUrl: options.bloomVaultUrl || STAGING_BLOOM_VAULT_URL,
+        affinidiVaultUrl: options.affinidiVaultUrl || STAGING_AFFINIDI_VAULT_URL,
         keyStorageUrl: options.keyStorageUrl || STAGING_KEY_STORAGE_URL,
         clientId: STAGING_COGNITO_CLIENT_ID,
         userPoolId: STAGING_COGNITO_USER_POOL_ID,
@@ -131,7 +138,8 @@ const splitOptions = <TOptions extends SdkOptions>(options: TOptions) => {
     issuerUrl,
     registryUrl,
     verifierUrl,
-    vaultUrl,
+    bloomVaultUrl,
+    affinidiVaultUrl,
     keyStorageUrl,
     phoneIssuerBasePath,
     emailIssuerBasePath,
@@ -151,7 +159,8 @@ const splitOptions = <TOptions extends SdkOptions>(options: TOptions) => {
       issuerUrl,
       registryUrl,
       verifierUrl,
-      vaultUrl,
+      bloomVaultUrl,
+      affinidiVaultUrl,
       keyStorageUrl,
       phoneIssuerBasePath,
       emailIssuerBasePath,

@@ -27,7 +27,7 @@ export default class AffinidiVaultApiService extends GenericApiService<ApiSpec> 
     return this.execute('SearchCredentials', {
       authorization: accessToken,
       storageRegion,
-      queryParams: { types: JSON.stringify(types) },
+      queryParams: (types.length > 0) ? { types: JSON.stringify(types) } : {},
     })
   }
 

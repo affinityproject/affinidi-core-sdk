@@ -6,10 +6,15 @@ import { expect } from 'chai'
 
 import { JwtService, KeysService } from '@affinidi/common'
 import { KeyStorageApiService } from '@affinidi/internal-api-clients'
+import { DidAuthService } from '@affinidi/affinidi-did-auth-lib'
 import { authorizeVault } from './../../helpers'
 import KeyManagementService from '../../../src/services/KeyManagementService'
 import WalletStorageService from '../../../src/services/WalletStorageService'
-import { STAGING_VAULT_URL, STAGING_KEY_STORAGE_URL } from '../../../src/_defaultConfig'
+import {
+  STAGING_AFFINIDI_VAULT_URL,
+  STAGING_KEY_STORAGE_URL,
+  STAGING_BLOOM_VAULT_URL,
+} from '../../../src/_defaultConfig'
 
 import { generateTestDIDs } from '../../factory/didFactory'
 import { testPlatformTools } from '../../helpers/testPlatformTools'
@@ -18,6 +23,7 @@ import signedCredential from '../../factory/signedCredential'
 
 import credentialShareRequestToken from '../../factory/credentialShareRequestToken'
 import parsedCredentialShareRequestToken from '../../factory/parsedCredentialShareRequestToken'
+import { SignedCredential } from '../../../src/dto'
 
 let walletPassword: string
 
@@ -28,10 +34,13 @@ const fetchCredentialsBase = '/data/'
 
 const createWalletStorageService = () => {
   const keysService = new KeysService(encryptedSeed, walletPassword)
-  return new WalletStorageService(keysService, testPlatformTools, {
-    vaultUrl: STAGING_VAULT_URL,
+  const didAuthService = new DidAuthService({ encryptedSeed, encryptionKey: walletPassword })
+  return new WalletStorageService(didAuthService, keysService, testPlatformTools, {
+    bloomVaultUrl: STAGING_BLOOM_VAULT_URL,
+    affinidiVaultUrl: STAGING_AFFINIDI_VAULT_URL,
     accessApiKey: undefined,
     storageRegion: undefined,
+    audienceDid: '',
   })
 }
 
@@ -62,14 +71,14 @@ describe('WalletStorageService', () => {
 
     const saveCredentialPath = '/data'
 
-    nock(STAGING_VAULT_URL)
+    nock(STAGING_AFFINIDI_VAULT_URL)
       .filteringPath(() => saveCredentialPath)
       .post(saveCredentialPath)
       .reply(200, {})
 
     const walletStorageService = createWalletStorageService()
 
-    const response = await walletStorageService.saveCredentials(['encrypted'])
+    const response = await walletStorageService.saveCredentials([{} as SignedCredential])
 
     expect(response).to.be.an('array')
   })
@@ -156,7 +165,7 @@ describe('WalletStorageService', () => {
   it('#fetchEncryptedCredentials', async () => {
     await authorizeVault()
 
-    nock(STAGING_VAULT_URL).get(fetchCredentialsPath).reply(200, [signedCredential])
+    nock(STAGING_AFFINIDI_VAULT_URL).get(fetchCredentialsPath).reply(200, [signedCredential])
 
     const walletStorageService = createWalletStorageService()
     const response = await walletStorageService.fetchEncryptedCredentials()
@@ -168,7 +177,7 @@ describe('WalletStorageService', () => {
   it('#fetchEncryptedCredentials throws `COR-14 / 404` when no credentials found', async () => {
     await authorizeVault()
 
-    nock(STAGING_VAULT_URL).get(fetchCredentialsPath).reply(404, {})
+    nock(STAGING_AFFINIDI_VAULT_URL).get(fetchCredentialsPath).reply(404, {})
 
     const walletStorageService = createWalletStorageService()
 
@@ -189,7 +198,7 @@ describe('WalletStorageService', () => {
   it('#fetchEncryptedCredentials throws error returned from vault', async () => {
     await authorizeVault()
 
-    nock(STAGING_VAULT_URL).get(fetchCredentialsPath).reply(500, {})
+    nock(STAGING_AFFINIDI_VAULT_URL).get(fetchCredentialsPath).reply(500, {})
 
     const walletStorageService = createWalletStorageService()
 
@@ -208,11 +217,11 @@ describe('WalletStorageService', () => {
     it('should work for single page', async () => {
       await authorizeVault()
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '0/99')
         .reply(200, [signedCredential])
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '100/199')
         .reply(200, [])
 
@@ -225,19 +234,19 @@ describe('WalletStorageService', () => {
     it('should work for multiple pages', async () => {
       await authorizeVault()
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '0/99')
         .reply(200, Array(100).fill(signedCredential))
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '100/199')
         .reply(200, Array(100).fill(signedCredential))
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '200/299')
         .reply(200, Array(50).fill(signedCredential))
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '300/399')
         .reply(200, [])
 
@@ -252,15 +261,15 @@ describe('WalletStorageService', () => {
     it('should work for whole number of pages', async () => {
       await authorizeVault()
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '0/99')
         .reply(200, Array(100).fill(signedCredential))
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '100/199')
         .reply(200, Array(100).fill(signedCredential))
 
-      nock(STAGING_VAULT_URL)
+      nock(STAGING_AFFINIDI_VAULT_URL)
         .get(fetchCredentialsBase + '200/299')
         .reply(200, [])
 
@@ -279,26 +288,26 @@ describe('WalletStorageService', () => {
         const expectedResult = Array(100).fill(signedCredential)
         expectedResult[2] = { cyphertext: null }
         const expectedPath = `${fetchCredentialsBase}0/99`
-        nock(STAGING_VAULT_URL).get(expectedPath).reply(200, expectedResult)
+        nock(STAGING_AFFINIDI_VAULT_URL).get(expectedPath).reply(200, expectedResult)
       }
 
       {
         const expectedResult = Array(100).fill(signedCredential)
         expectedResult[90] = { cyphertext: null }
         const expectedPath = `${fetchCredentialsBase}100/199`
-        nock(STAGING_VAULT_URL).get(expectedPath).reply(200, expectedResult)
+        nock(STAGING_AFFINIDI_VAULT_URL).get(expectedPath).reply(200, expectedResult)
       }
 
       {
         const expectedResult = Array(50).fill(signedCredential)
         expectedResult[30] = { cyphertext: null }
         const expectedPath = `${fetchCredentialsBase}200/299`
-        nock(STAGING_VAULT_URL).get(expectedPath).reply(200, expectedResult)
+        nock(STAGING_AFFINIDI_VAULT_URL).get(expectedPath).reply(200, expectedResult)
       }
 
       {
         const expectedPath = `${fetchCredentialsBase}300/399`
-        nock(STAGING_VAULT_URL).get(expectedPath).reply(200, [])
+        nock(STAGING_AFFINIDI_VAULT_URL).get(expectedPath).reply(200, [])
       }
 
       const walletStorageService = createWalletStorageService()
@@ -322,7 +331,7 @@ describe('WalletStorageService', () => {
         await authorizeVault()
 
         const expectedPath = fetchCredentialsBase + path
-        nock(STAGING_VAULT_URL).get(expectedPath).reply(200, [signedCredential])
+        nock(STAGING_AFFINIDI_VAULT_URL).get(expectedPath).reply(200, [signedCredential])
 
         const walletStorageService = createWalletStorageService()
         const response = await walletStorageService.fetchEncryptedCredentials(...args)
@@ -353,7 +362,7 @@ describe('WalletStorageService', () => {
       const expectedResult = Array(5).fill(signedCredential)
       expectedResult[2] = { cyphertext: null }
       const expectedPath = `${fetchCredentialsBase}0/99`
-      nock(STAGING_VAULT_URL).get(expectedPath).reply(200, expectedResult)
+      nock(STAGING_AFFINIDI_VAULT_URL).get(expectedPath).reply(200, expectedResult)
 
       const walletStorageService = createWalletStorageService()
       const response = await walletStorageService.fetchEncryptedCredentials()
