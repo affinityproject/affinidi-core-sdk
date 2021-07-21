@@ -205,7 +205,7 @@ const getHelperContextEntries = () => {
     bankAccountTransactionV1Entry,
     bankAccountTransactionGroupV1Entry,
     organizationAccountEntry,
-    accountEntry,
+    accountEntry
   ]
 }
 

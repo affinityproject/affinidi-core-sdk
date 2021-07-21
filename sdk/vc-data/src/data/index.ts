@@ -23,5 +23,6 @@ export * from './nationalid'
 export * from './phone'
 export * from './trade'
 export * from './winner'
+export * from './accountOwnership'
 
 export * from './util'
